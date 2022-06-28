@@ -57,7 +57,7 @@ int http_parse_request_line(http_request_t *r)
     };
 
     for (pi = r->pos; pi < r->last; pi++) {
-        p = (uint8_t *) &r->buf[pi << 13 >> 13];
+        p = (uint8_t *) &r->buf[pi & (MAX_BUF-1)];
         ch = *p;
         goto *conditions[state];
 
@@ -298,7 +298,7 @@ int http_parse_request_body(http_request_t *r)
     http_header_t *hd;
 
     for (pi = r->pos; pi < r->last; pi++) {
-        p = (uint8_t *) &r->buf[pi << 13 >> 13];
+        p = (uint8_t *) &r->buf[pi & (MAX_BUF-1)];
         ch = *p;
         goto *conditions[state];
 
