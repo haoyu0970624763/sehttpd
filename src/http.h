@@ -25,7 +25,7 @@ enum http_status {
     HTTP_NOT_MODIFIED = 304,
     HTTP_NOT_FOUND = 404,
 };
-
+/* Make the buffer size to the power of 2 */
 #define MAX_BUF 8124
 
 typedef struct {
