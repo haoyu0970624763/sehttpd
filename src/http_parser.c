@@ -3,7 +3,6 @@
 #include <stdlib.h>
 
 #include "http.h"
-
 /* constant-time string comparison */
 #define cst_strcmp(m, c0, c1, c2, c3) \
     *(uint32_t *) m == ((c3 << 24) | (c2 << 16) | (c1 << 8) | c0)
@@ -39,26 +38,26 @@ int http_parse_request_line(http_request_t *r)
         s_almost_done
     } state;
 
-    const void *conditions[] = {&&c_start,
-                                &&c_method,
-                                &&c_spaces_before_uri,
-                                &&c_after_slash_in_uri,
-                                &&c_http,
-                                &&c_http_H,
-                                &&c_http_HT,
-                                &&c_http_HTT,
-                                &&c_http_HTTP,
-                                &&c_first_major_digit,
-                                &&c_major_digit,
-                                &&c_first_minor_digit,
-                                &&c_minor_digit,
-                                &&c_spaces_after_digit,
-                                &&c_almost_done};
-
-    state = r->state;
+    const void *conditions[] = {
+        &&c_start,
+        &&c_method,
+        &&c_spaces_before_uri,
+        &&c_after_slash_in_uri,
+        &&c_http,
+        &&c_http_H,
+        &&c_http_HT,
+        &&c_http_HTT,
+        &&c_http_HTTP,
+        &&c_first_major_digit,
+        &&c_major_digit,
+        &&c_first_minor_digit,
+        &&c_minor_digit,
+        &&c_spaces_after_digit,
+        &&c_almost_done
+    };
 
     for (pi = r->pos; pi < r->last; pi++) {
-        p = (uint8_t *) &r->buf[pi % MAX_BUF];
+        p = (uint8_t *) &r->buf[pi << 13 >> 13];
         ch = *p;
         goto *conditions[state];
 
@@ -299,7 +298,7 @@ int http_parse_request_body(http_request_t *r)
     http_header_t *hd;
 
     for (pi = r->pos; pi < r->last; pi++) {
-        p = (uint8_t *) &r->buf[pi % MAX_BUF];
+        p = (uint8_t *) &r->buf[pi << 13 >> 13];
         ch = *p;
         goto *conditions[state];
 
